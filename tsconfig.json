@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"sourceMap": true,
+		"jsx": "react",
+		"skipLibCheck": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"downlevelIteration": true,
+		"allowJs": false,
+		"outDir": "dist",
+		"lib": [
+			"es5",
+			"es2015.promise",
+			"ES2017",
+			"dom"
+		]
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}
+
