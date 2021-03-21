@@ -1,69 +1,66 @@
+import {Container, inject, injectable} from "inversify";
 import "reflect-metadata";
-import {interfaces, injectable, inject, Container} from "inversify";
 
-// 1. Declare interfaces
-interface Warrior {
-	fight(): string;
-	sneak(): string;
-}
-
-interface Weapon {
-	hit(): string;
-}
-
-interface ThrowableWeapon {
-	throw(): string;
-}
-
-// 2. Declare types
-const TYPES = {
-	Warrior: Symbol("Warrior"),
-	Weapon: Symbol("Weapon"),
-	ThrowableWeapon: Symbol("ThrowableWeapon"),
-};
-
-// 3. Declare classes
 @injectable()
-class Katana implements Weapon {
-	public hit() {
-		return "cut!";
+class Inject11 {
+	constructor() {
+		console.log("construct inject 11");
+	}
+
+	public test() {
+		console.log("inject 11");
 	}
 }
 
 @injectable()
-class Shuriken implements ThrowableWeapon {
-	public throw() {
-		return "hit!";
+class Inject1 {
+	@inject("inject11")
+	public inject11: Inject11;
+
+	constructor() {
+		console.log("construct inject 1");
+	}
+
+	public test() {
+		console.log("inject 1");
+		this.inject11.test();
 	}
 }
 
 @injectable()
-class Ninja implements Warrior {
-	private _katana: Weapon;
-	private _shuriken: ThrowableWeapon;
-
-	public constructor(@inject(TYPES.Weapon) katana: Weapon, @inject(TYPES.ThrowableWeapon) shuriken: ThrowableWeapon) {
-		this._katana = katana;
-		this._shuriken = shuriken;
+class Inject2 {
+	constructor() {
+		console.log("construct inject 2");
 	}
 
-	public fight() {
-		return this._katana.hit();
-	}
-	public sneak() {
-		return this._shuriken.throw();
+	public test() {
+		console.log("inject 2");
 	}
 }
 
-// 4. Create instance of Container & declare type bindings
+@injectable()
+class Root {
+	@inject("inject1")
+	private inject1: Inject1;
+	@inject("inject2")
+	private inject2: Inject2;
+
+	public callInject1() {
+		this.inject1.test();
+	}
+
+	public callInject2() {
+		this.inject2.test();
+	}
+}
+
 const myContainer = new Container();
-myContainer.bind<Warrior>(TYPES.Warrior).to(Ninja);
-myContainer.bind<Weapon>(TYPES.Weapon).to(Katana);
-myContainer.bind<ThrowableWeapon>(TYPES.ThrowableWeapon).to(Shuriken);
+myContainer.bind("root").to(Root);
+myContainer.bind("inject1").to(Inject1);
+myContainer.bind("inject2").to(Inject2);
+myContainer.bind("inject11").to(Inject11);
 
-// 5. Resolve Warrior type
-const ninja = myContainer.get<Warrior>(TYPES.Warrior);
+const ninja = myContainer.get<Root>("root");
 
-// 6. Check “Katana” and “Shuriken” has been injected into “Ninja”
-console.log(ninja.fight()); // "cut!"
-console.log(ninja.sneak()); // "hit!"
+ninja.callInject1();
+ninja.callInject2();

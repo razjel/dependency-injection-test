@@ -1,3 +1,3 @@
 ```ts
-npm start
-```
+npm run build
+```                                     
