@@ -17,12 +17,15 @@ class Inject1 {
 	@inject("inject11")
 	public inject11: Inject11;
 
+	public count = 0;
+
 	constructor() {
 		console.log("construct inject 1");
 	}
 
 	public test() {
-		console.log("inject 1");
+		this.count++;
+		console.log("inject 1, count:", this.count);
 		this.inject11.test();
 	}
 }
@@ -54,13 +57,17 @@ class Root {
 	}
 }
 
-const myContainer = new Container();
-myContainer.bind("root").to(Root);
-myContainer.bind("inject1").to(Inject1);
-myContainer.bind("inject2").to(Inject2);
-myContainer.bind("inject11").to(Inject11);
+const cont1 = new Container({defaultScope: "Singleton", autoBindInjectable: true});
+cont1.bind("inject1").to(Inject1);
+cont1.bind("inject2").to(Inject2);
+cont1.bind("inject11").to(Inject11);
+const ninja1 = cont1.get(Root);
+ninja1.callInject1();
+ninja1.callInject2();
+const ninja11 = cont1.get(Root);
+ninja11.callInject1();
+ninja11.callInject2();
 
-const ninja = myContainer.get<Root>("root");
+const cont2 = new Container()
+const.
 
-ninja.callInject1();
-ninja.callInject2();
